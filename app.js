@@ -1,117 +1,99 @@
+// Ein paar Start-Vokabeln
 const defaultVocab = [
   { de: "Haus", es: "casa" },
   { de: "Baum", es: "árbol" },
   { de: "Auto", es: "coche" },
+  { de: "Essen", es: "comida" },
+  { de: "Trinken", es: "beber" },
 ];
 
-let vocab = [];
 const STORAGE_KEY = "vokabeltrainer_vocab";
 
-function loadVocab() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  vocab = saved ? JSON.parse(saved) : defaultVocab;
-}
-
-function saveVocab() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(vocab));
-}
-
+let vocab = [];
 let currentIndex = 0;
 let currentDirection = "de-es";
 let knownCount = 0;
 let unknownCount = 0;
 
-const questionEl = document.getElementById("question");
-const answerEl = document.getElementById("answer");
-const showAnswerBtn = document.getElementById("show-answer");
-const knewItBtn = document.getElementById("knew-it");
-const didntKnowBtn = document.getElementById("didnt-know");
-const nextWordBtn = document.getElementById("next-word");
-const totalCountEl = document.getElementById("total-count");
-const knownCountEl = document.getElementById("known-count");
-const unknownCountEl = document.getElementById("unknown-count");
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM-Elemente holen
+  const questionEl = document.getElementById("question");
+  const answerEl = document.getElementById("answer");
+  const showAnswerBtn = document.getElementById("show-answer");
+  const knewItBtn = document.getElementById("knew-it");
+  const didntKnowBtn = document.getElementById("didnt-know");
+  const nextWordBtn = document.getElementById("next-word");
+  const totalCountEl = document.getElementById("total-count");
+  const knownCountEl = document.getElementById("known-count");
+  const unknownCountEl = document.getElementById("unknown-count");
 
-const addForm = document.getElementById("add-word-form");
-const deInput = document.getElementById("de-input");
-const esInput = document.getElementById("es-input");
+  const addForm = document.getElementById("add-word-form");
+  const deInput = document.getElementById("de-input");
+  const esInput = document.getElementById("es-input");
 
-const aiTopicInput = document.getElementById("ai-topic");
-const aiSuggestBtn = document.getElementById("ai-suggest");
+  const aiTopicInput = document.getElementById("ai-topic");
+  const aiCountInput = document.getElementById("ai-count");
+  const aiSuggestBtn = document.getElementById("ai-suggest");
+  const aiStatusEl = document.getElementById("ai-status");
 
-function updateStats() {
-  totalCountEl.textContent = vocab.length;
-  knownCountEl.textContent = knownCount;
-  unknownCountEl.textContent = unknownCount;
-}
+  // URL deines späteren KI-Backends (Platzhalter)
+  // Wenn dein Backend steht, hier z. B.:
+  // const AI_BACKEND_URL = "https://dein-backend-host/ai-vocab";
+  const AI_BACKEND_URL = "https://DEIN-BACKEND-HOST/ai-vocab";
 
-function pickRandomIndex() {
-  currentIndex = Math.floor(Math.random() * vocab.length);
-}
+  // --- LocalStorage-Funktionen ---
 
-function showCard() {
-  const item = vocab[currentIndex];
-
-  if (currentDirection === "de-es") {
-    questionEl.textContent = item.de;
-    answerEl.textContent = item.es;
-  } else {
-    questionEl.textContent = item.es;
-    answerEl.textContent = item.de;
+  function loadVocab() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        vocab = JSON.parse(saved);
+      } else {
+        vocab = defaultVocab.slice();
+        saveVocab();
+      }
+    } catch (e) {
+      console.error("Fehler beim Laden aus LocalStorage:", e);
+      vocab = defaultVocab.slice();
+    }
   }
-  answerEl.classList.add("hidden");
-}
 
-showAnswerBtn.addEventListener("click", () => {
-  answerEl.classList.remove("hidden");
-});
+  function saveVocab() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(vocab));
+    } catch (e) {
+      console.error("Fehler beim Speichern in LocalStorage:", e);
+    }
+  }
 
-knewItBtn.addEventListener("click", () => {
-  knownCount++;
-  updateStats();
-  nextCard();
-});
+  // --- Statistik ---
 
-didntKnowBtn.addEventListener("click", () => {
-  unknownCount++;
-  updateStats();
-  nextCard();
-});
+  function updateStats() {
+    totalCountEl.textContent = vocab.length;
+    knownCountEl.textContent = knownCount;
+    unknownCountEl.textContent = unknownCount;
+  }
 
-nextWordBtn.addEventListener("click", nextCard);
+  // --- Kartenlogik ---
 
-document.querySelectorAll('input[name="direction"]').forEach((radio) => {
-  radio.addEventListener("change", (e) => {
-    currentDirection = e.target.value;
-    showCard();
-  });
-});
+  function pickRandomIndex() {
+    if (vocab.length === 0) {
+      currentIndex = -1;
+      return;
+    }
+    currentIndex = Math.floor(Math.random() * vocab.length);
+  }
 
-addForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  vocab.push({ de: deInput.value, es: esInput.value });
-  saveVocab();
-  updateStats();
-  deInput.value = "";
-  esInput.value = "";
-});
+  function showCard() {
+    if (!questionEl || !answerEl) return;
 
-aiSuggestBtn.addEventListener("click", () => {
-  const demo = [
-    { de: "Essen", es: "comida" },
-    { de: "Trinken", es: "beber" },
-    { de: "Reise", es: "viaje" },
-  ];
-  demo.forEach((w) => vocab.push(w));
-  saveVocab();
-  updateStats();
-  alert("Demo-Vokabeln wurden hinzugefügt.");
-});
+    if (vocab.length === 0 || currentIndex === -1) {
+      questionEl.textContent = "Noch keine Vokabeln vorhanden.";
+      answerEl.textContent = "";
+      answerEl.classList.add("hidden");
+      return;
+    }
 
-function nextCard() {
-  pickRandomIndex();
-  showCard();
-}
+    const item = vocab[currentIndex];
 
-loadVocab();
-updateStats();
-nextCard();
+    if (currentDirection === "de-es") {
