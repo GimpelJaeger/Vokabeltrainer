@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // URL deines späteren KI-Backends (Platzhalter)
   // Wenn dein Backend steht, hier z. B.:
   // const AI_BACKEND_URL = "https://dein-backend-host/ai-vocab";
- const AI_BACKEND_URL = "http://localhost:3000/ai-vocab";
+const AI_BACKEND_URL = "https://DEIN-BACKEND-HOST/ai-vocab";
 
   // --- LocalStorage-Funktionen ---
 
