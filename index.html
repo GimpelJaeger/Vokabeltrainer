@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Vokabeltrainer ES ⇄ DE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1 style="color:red">TEST – wenn du das siehst, ist HTML da</h1>
+    <h1>Vokabeltrainer Spanisch ⇄ Deutsch</h1>
+  </header>
+
+  <main>
+    <section class="mode">
+      <label>
+        <input type="radio" name="direction" value="de-es" checked>
+        Deutsch → Spanisch
+      </label>
+      <label>
+        <input type="radio" name="direction" value="es-de">
+        Spanisch → Deutsch
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="card-question" id="question"></div>
+      <div class="card-answer hidden" id="answer"></div>
+      <div class="card-buttons">
+        <button id="show-answer">Lösung anzeigen</button>
+        <button id="knew-it">Gewusst ✔</button>
+        <button id="didnt-know">Nicht gewusst ✘</button>
+        <button id="next-word">Nächste Karte ⏭</button>
+      </div>
+      <p class="stats">
+        Gesamt: <span id="total-count">0</span> |
+        Gewusst: <span id="known-count">0</span> |
+        Nicht gewusst: <span id="unknown-count">0</span>
+      </p>
+    </section>
+
+    <section class="add-word">
+      <h2>Vokabel hinzufügen</h2>
+      <form id="add-word-form">
+        <div class="form-row">
+          <label>Deutsch</label>
+          <input type="text" id="de-input" required>
+        </div>
+        <div class="form-row">
+          <label>Spanisch</label>
+          <input type="text" id="es-input" required>
+        </div>
+        <button type="submit">Vokabel speichern</button>
+      </form>
+    </section>
+
+    <section class="ai-section">
+      <h2>KI-Vorschläge (Demo)</h2>
+      <div class="form-row">
+        <label>Thema / Kategorie</label>
+        <input type="text" id="ai-topic" placeholder="z.B. Essen, Reisen">
+      </div>
+      <button id="ai-suggest">KI-Vokabeln hinzufügen (Demo)</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
